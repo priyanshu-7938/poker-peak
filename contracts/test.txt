@@ -1,0 +1,67 @@
+deck:
+    ["2_s", "2_h", "2_d", "2_c", "3_s", "3_h", "3_d", "3_c", "4_s", "4_h", "4_d", "4_c", "5_s", "5_h", "5_d", "5_c", "6_s", "6_h", "6_d", "6_c", "7_s", "7_h", "7_d", "7_c", "8_s", "8_h", "8_d", "8_c", "9_s", "9_h", "9_d", "9_c", "10_s", "10_h", "10_d", "10_c", "J_s", "J_h", "J_d", "J_c", "Q_s", "Q_h", "Q_d", "Q_c", "K_s", "K_h", "K_d", "K_c", "A_s", "A_h", "A_d", "A_c"]
+
+
+userdata:
+    [
+        [0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC, "publicKey1", true],
+        [0x90F79bf6EB2c4f870365E785982E1f101E93b906, "publicKey2", false],
+        [0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65, "publicKey3", false],
+        [0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc, "publicKey4", true],
+        [0x976EA74026E726554dB657fA54763abd0C3a0aa9, "publicKey5", true],
+        [0x14dC79964da2C08b23698B3D3cc7Ca32193d9955, "publicKey6", false]
+    ]
+
+
+
+process of function calling...
+
+contract deploy...
+
+1. deployment maybe....
+1.1 get the random number from the QRNG.
+and change the state for random number generated. 
+2. shuffelCards
+3. gameInit : sets the values for the game like  next expected person.
+
+4. user's turn....
+
+Contract deployed at : 0x4003fF42C6f97182A60b3222C206c8B857B360E9 in pegesis testnet.(this one is not funded eror orrucre...);
+informations:
+
+contract address :: 
+_airnoderrp : 0xa0AD79D995DdeeB18a14eAef56A549A04e3Aa1Bd //address for the chain lightlink.
+
+generating random number:
+airnode : 0x6238772544f029ecaBfDED4300f13A3c4FE84E1D
+endPointIdunt256 : 0x94555f83f1addda23fdaa7c74f27ce2b764ed5cc430c66f5ff1bcf39d583da36
+endPointIdunt256Array : 0x9877ec98695c139310480b4323b9d474d48ec4595560348a2341218670f7fbc2
+
+creating the sponcerWallet thats gonna pay for the QRNG generation...
+
+npx @api3/airnode-admin derive-sponsor-wallet-address ^
+  --airnode-xpub xpub6CUGRUo... ^
+  --airnode-address 0xe1e0dd... ^
+  --sponsor-address 0x9Ec6C4...
+
+  sponcer-address == 0x4003fF42C6f97182A60b3222C206c8B857B360E9 //contract address...
+  airnode-address == 0x9d3C147cA16DB954873A498e0af5852AB39139f2 // from qrng website
+  airnode-xpub == xpub6DXSDTZBd4aPVXnv6Q3SmnGUweFv6j24SK77W4qrSFuhGgi666awUiXakjXruUSCDQhhctVG7AQt67gMdaRAsDnDXv23bBRKsMWvRzo6kbf // from site
+
+ so the command is::
+
+ npx @api3/airnode-admin derive-sponsor-wallet-address ^
+  --airnode-xpub xpub6DXSDTZBd4aPVXnv6Q3SmnGUweFv6j24SK77W4qrSFuhGgi666awUiXakjXruUSCDQhhctVG7AQt67gMdaRAsDnDXv23bBRKsMWvRzo6kbf ^
+  --airnode-address 0x9d3C147cA16DB954873A498e0af5852AB39139f2 ^
+  --sponsor-address 0x4003fF42C6f97182A60b3222C206c8B857B360E9
+  this is generted address: 0xB79ed9DCb870d65256d47dDf6C3997833cB373fb
+
+
+important re do all of this wiith, sending funds to the contract for call baack
+
+
+
+
+
+// Template contract address :::: 0x9a3097C5961a1F0c4d9DF015C8D9B33458Db8F1e
+sponcer address for this. :::: 0x4711cCDC21E64E90Bd3b2981f8574477B5DD5350
