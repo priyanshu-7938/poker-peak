@@ -105,4 +105,6 @@ And same for the server fro the game.
 # Team Members
 
 - Priyanshu Soni
-- Mohammed Saad
+- Ayush Singh
+- Smit Shah
+- Prateek Kumar
