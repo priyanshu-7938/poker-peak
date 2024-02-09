@@ -8,17 +8,17 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please provide your name"]
+      required: [true, "Please provide your name"],
     },
     address: {
       type: String,
       required: [true, "must have a name"],
       trim: true,
-      unique: true
+      unique: true,
     },
     token: {
       type: String,
-      required: [true, "must have a name"]
+      required: [true, "must have a name"],
     },
     email: {
       type: String,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
         if (!validator.isEmail(value)) {
           throw new Error("Enter valid email");
         }
-      }
+      },
     },
     password: {
       type: String,
@@ -40,41 +40,41 @@ const userSchema = new mongoose.Schema(
         if (value.length < 7) {
           throw new Error("Password should be greater than 6 digit");
         }
-      }
+      },
     },
     pooledMoney: {
       type: String,
-      default: "0"
+      default: "0",
     },
     avatar: {
       type: String,
-      default: "https://avataaars.io/"
+      default: "https://avataaars.io/",
     },
     admin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     verified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     kyc: {
       type: Boolean,
-      default: false
+      default: false,
     },
     otp: {
       type: String,
-      default: ""
+      default: "",
     },
     phoneNo: {
-      type: String
+      type: String,
     },
     phrase: {
-      type: String
-    }
+      type: String,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
@@ -132,23 +132,21 @@ userSchema.statics.findByAddressValue = async (address) => {
     if (!user) {
       throw new Error("Unable to fetch user for the game room.");
     }
-    return user;  
+    return user;
   } catch (err) {
     console.log(err);
     return;
   }
-  
 };
 
 userSchema.statics.validateToken = async (token, _id) => {
   try {
     const user = await User.findOne({ _id });
-    return token == user?.token;  
+    return token == user?.token;
   } catch (err) {
     console.log(err);
     return;
   }
-  
 };
 
 userSchema.pre("save", async function (next) {
