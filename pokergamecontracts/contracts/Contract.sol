@@ -23,13 +23,14 @@ contract PokerRoom is RrpRequesterV0{
     address public expectedUserAddress = address(0);//CLEANUP:make private later
     uint256 public pooledAmount;
     uint256 public currentBet;
+    uint256 public THEBASEBET;
     string[] public initialDeck;//conating the 52 cards.
     string[] public gameDeck;//containg the 17 cards.
     uint[] coPrimesOf52 = [3,5,7,9,11,15,17,19,21,23,27,29,31,33,35,37,39,41,43,45,47,51];//used to do Affine Cipher on the deck
     uint8 userCount;
     bool public theDeckCreated = false;
     string deckHash = "";
-    uint256 public GENERATEDRANDOMNUMBER= 11312300201045626;//from QRNG.
+    uint256 public GENERATEDRANDOMNUMBER;
     bool public ISNUMBERGENERATED;
     bool public APPLIEDFORRANDOMNUMBERGENERATION;
     bool public ISDECKCREATED;
@@ -62,6 +63,7 @@ contract PokerRoom is RrpRequesterV0{
         userCount = 0;// number of unfloded members
         pooledAmount = 0;//pot value
         currentBet = _initialBet;//calling bet
+        THEBASEBET = _initialBet;
         GAMENONCE = 0; //fame counts
         ISNUMBERGENERATED = false;
         ISDECKCREATED = false;
@@ -70,7 +72,6 @@ contract PokerRoom is RrpRequesterV0{
         APPLIEDFORRANDOMNUMBERGENERATION = false;
     }
     
-    //events
     //emitCode: 1
     event UserFoldedWithReason(uint8 emitCode , uint256 indexed createdOn , address indexed createdBy,  uint256 indexed nonce, address foldAddress, string reason);
     //emitCode: 2
@@ -82,12 +83,14 @@ contract PokerRoom is RrpRequesterV0{
     //eventCode: 5
     event pKeyExposed(uint8 emitCode , uint256 indexed createdOn , address indexed createdBy , uint256 indexed nonce , string privateKey);
     //eventCode: 6
-    event StateDiscloser(uint8 emitCode , uint256 indexed createdOn , uint256 indexed nonce, GameState stateTransitationTo);
+    event StateDiscloser(uint8 emitCode , uint256 indexed createdOn , address indexed createdBy, uint256 indexed nonce, GameState stateTransitationTo);
     //eventCode: 7
     event RandomNumberGenerated(uint8 emitCode , uint256 indexed createdOn ,address indexed createdBy ,  uint256 indexed nonce , uint256 randomNumber );
     //emitCode: 8
     event WithdrawalRequested(uint8 emitCode , address indexed createdBy, address indexed airnode, address indexed sponsorWallet);
-    
+    //eventCode: 9
+    event initialDeckPost(uint8 emitCode , uint256 indexed createdOn , address indexed createdBy , uint256 indexed nonce , string[] cards);
+
     //modifiers
     modifier onlyServer {
         require(msg.sender == server,'{"statusCode": 401, "message": "unauthorised"');
@@ -159,16 +162,16 @@ contract PokerRoom is RrpRequesterV0{
         require(stateDefiner == GameState.RESTING, '{"statusCode": 900, "message": "game not in RESTING phase, required to be in resting for deck upload"}');
         initialDeck = _deck;
         ISROOTDECKPUBLISHED = true;
+        emit initialDeckPost(9 , block.timestamp, roomAddress, GAMENONCE, initialDeck);        
     }
 
     function shuffleDeck() public onlyServer {
         require( stateDefiner == GameState.RESTING,'{"statusCode": 401, "message": "game not in resting state."');
         require(ISROOTDECKPUBLISHED, '{"statusCode": 9001, "message": "root deck not published yet."}');
         require(ISNUMBERGENERATED, '{"statusCode": 401, "message": "randomnumber not generated."}');
-        // Use the random number to select a random value of 'a'
-        uint256 aIndex = GENERATEDRANDOMNUMBER % 22;//generateed the value of aIndex.
+        uint256 aIndex = GENERATEDRANDOMNUMBER % 22;
         uint256 a = coPrimesOf52[aIndex];
-        uint256 b = (((GENERATEDRANDOMNUMBER % 100000000) / (GENERATEDRANDOMNUMBER % 1000)) % 51) +1; //  b cant be zero.
+        uint256 b = (((GENERATEDRANDOMNUMBER % 100000000) / (GENERATEDRANDOMNUMBER % 1000)) % 51) +1;
         for (uint256 i = 0; i < 17; i++){
             uint256 index = (a * i + b) % 52;
             gameDeck.push(initialDeck[index]);
@@ -177,7 +180,7 @@ contract PokerRoom is RrpRequesterV0{
         ISDECKCREATED = true;               
     }
 
-    function gameInit(userData[] calldata users) public onlyServer returns(userData memory){
+    function gameInit(userData[] calldata users) public onlyServer {
         //setes the users...
         require( stateDefiner == GameState.RESTING,'{"statusCode": 401, "message": "game not in resting state."');
         require(ISDECKCREATED,'{"statusCode": 401, "message": "Deck not created yet."}');
@@ -197,7 +200,7 @@ contract PokerRoom is RrpRequesterV0{
         }
         userCount = count;
         stateDefiner = GameState.FIRSTLOOP;
-        return Users[0];
+        emit StateDiscloser(6, block.timestamp, roomAddress,  GAMENONCE, stateDefiner);
     }
 
     function hardResetWithCleanup(address payable _winner) public onlyServer {
@@ -209,9 +212,17 @@ contract PokerRoom is RrpRequesterV0{
         stateDefiner = GameState.RESTING;
         (bool success, ) = _winner.call{value: pooledAmount}("");
         require(success, '{"status" : 500, "message" : "Something went very wrong : sendingFunds"}');
+        //todo : make the card data to null
+        delete initialDeck;
+        delete gameDeck;
+        ISDECKCREATED = false;
+        ISROOTDECKPUBLISHED = false;
+        ISPRIVATEKEYEXPOSED = false;
+        ISNUMBERGENERATED = false;
         pooledAmount = 0;
-        currentBet=0;
-        GAMENONCE++;        
+        currentBet=THEBASEBET;
+        GAMENONCE++;     
+        emit StateDiscloser(6, block.timestamp, roomAddress,  GAMENONCE, stateDefiner);   
     }
 
     // to kick an user..
@@ -253,15 +264,9 @@ contract PokerRoom is RrpRequesterV0{
     }
     function callBet()  payable public expectedUser{
         require(msg.value >=currentBet,'{"statusCode": 422, "message": "message Value insufficient"');
-
-        //adding amount to the pot and stuff.
         pooledAmount += msg.value;
-
-        //set next person in the move, with given address.
         gameStateUpdate();
         setNextUserThatIsToBeExpected();
-        
-        // emit betCalled(2 , block.timestamp , roomAddress , msg.sender , pooledAmount , expectedUserAddress);
         emit betCalled(2, block.timestamp, roomAddress, GAMENONCE, msg.sender, pooledAmount, expectedUserAddress);
 
     }
@@ -276,8 +281,7 @@ contract PokerRoom is RrpRequesterV0{
                 Users[i].isFolded = true;
                 return;
             }
-        }  
-        require(false, '{"statusCode": 500, "message": "Something Went Very Wrong : folding by user."');
+        }
     }
 
 
@@ -312,7 +316,7 @@ contract PokerRoom is RrpRequesterV0{
         if(userCount == 1){
             stateDefiner = GameState.ENDED;
             // emit StateDiscloser(6, block.timestamp , stateDefiner);
-            emit StateDiscloser(6, block.timestamp, GAMENONCE, stateDefiner);
+            emit StateDiscloser(6, block.timestamp, roomAddress, GAMENONCE, stateDefiner);
             return;
         }
         for(uint8 i=5 ;i>=0 ;i--){
@@ -325,20 +329,20 @@ contract PokerRoom is RrpRequesterV0{
         if(stateDefiner == GameState.FIRSTLOOP){
             stateDefiner = GameState.SECONDLOOP;
             // emit StateDiscloser(6, block.timestamp , stateDefiner);
-            emit StateDiscloser(6, block.timestamp, GAMENONCE, stateDefiner);
+            emit StateDiscloser(6, block.timestamp, roomAddress, GAMENONCE, stateDefiner);
 
             return;            
         }
         else if(stateDefiner == GameState.SECONDLOOP){
             stateDefiner = GameState.THIRDLOOP;
             // emit StateDiscloser(6, block.timestamp , stateDefiner);
-            emit StateDiscloser(6, block.timestamp, GAMENONCE, stateDefiner);
+            emit StateDiscloser(6, block.timestamp, roomAddress, GAMENONCE, stateDefiner);
             return;            
         }
         else if(stateDefiner == GameState.THIRDLOOP){
             stateDefiner = GameState.ENDED;
             // emit StateDiscloser(6, block.timestamp , stateDefiner);
-            emit StateDiscloser(6, block.timestamp, GAMENONCE, stateDefiner);
+            emit StateDiscloser(6, block.timestamp, roomAddress, GAMENONCE, stateDefiner);
             return;            
         }
     }
@@ -353,4 +357,3 @@ contract PokerRoom is RrpRequesterV0{
     }
 
 }
-

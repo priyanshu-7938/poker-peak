@@ -4,6 +4,7 @@ import User from "../models/user.js"
 import { sendResponse,sendError } from "../middleware/sendResponce.js";
 
 const creatingARoom = async (req,res)=>{
+    // the baody may contain the ABI tooo
     const room = new Room(req.body);
     await room.save({validataBeforeSave:false});
     console.log(room);

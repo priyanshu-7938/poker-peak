@@ -60,6 +60,9 @@ const roomSchema = new mongoose.Schema(
       type: String,
       unique: true
     },
+    ABI: {
+      type: String,
+    }
   },
   {
     timestamps: true
@@ -86,6 +89,14 @@ roomSchema.statics.findByAddressValue = async (contrctAddress) => {
     return undefined;
   }
   return room;
+};
+
+roomSchema.statics.getABIbyAddressValue = async (contrctAddress) => {
+  const room = await Room.findOne({ contrctAddress });
+  if (!room) {
+    return undefined;
+  }
+  return room.ABI;
 };
 
 roomSchema.statics.getAllRooms = async function () {

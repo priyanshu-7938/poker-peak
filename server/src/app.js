@@ -9,7 +9,10 @@ import cors from "cors";
 import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { betRaised, UserFoldedWithReason, betCalled, deckPost, pKeyExposed, StateDiscloser, WithdrawalRequested, RandomNumberGenerated }  from "./HandelContractEmits/index.js";
+import Room from "./models/room.js";
 dotenv.config();
+
+const THECONTRACTBABY = "0x719A03ae0122cC82621C9a863bdF49D93d419687";
 
 const app = express();
 
@@ -40,22 +43,11 @@ const roomMessages = new Map();
 
 io.on("connection", (socket) => {
   console.log(`User Connected :${socket.id}`);
-
-  // socket.on("joinRoom", ({ roomName }) => {
-  //   socket.join(roomName);
-  //   socket.emit("message", { event: "you have joined the room !" });
-  //   socket.broadcast
-  //     .to(roomName)
-  //     .emit("message", { event: `${socket.id} has joined the room.` });
-  // });
-
   socket.on("joinRoom", ({ roomName, txn }) => {
-    // Create an empty array for storing messages if it doesn't exist
     console.log("roomName , ", roomName);
     if (!roomMessages.has(roomName)) {
       roomMessages.set(roomName, []);
     }
-    // Join the room
     socket.join(roomName);
   });
 
@@ -80,15 +72,15 @@ io.on("connection", (socket) => {
   });
 });
 
-//listeners on the contract.... goes here.....
-
-
 
 const sdk = ThirdwebSDK.fromPrivateKey("b468b6263292af56fcb78cfce1fc83ba504422307b4baa6cb99b8f3d01ebd3d0", LightlinkPegasusTestnet, {
       secretKey: "TbEJa6nQ01Nc7BHZuOG3jAiTOOTPN_AkeEmt8Qnlp7aQmgfzurz0z8_yiGOrVY-4CL5HdxHp4vbSxwkMzNuD8w",
                   
     } );
-const contract = await sdk.getContract("0x719A03ae0122cC82621C9a863bdF49D93d419687");
+    
+const ABI = await Room.getABIbyAddressValue(THECONTRACTBABY);
+    
+const contract = await sdk.getContract(THECONTRACTBABY,ABI);
  
 //event for contract...
 contract.events.addEventListener("UserFoldedWithReason", (event) => UserFoldedWithReason(event,io));
