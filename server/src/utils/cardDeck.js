@@ -11,8 +11,8 @@ dotenv.config();
 
 import crypto from "crypto";
 const CARDDECK =  ["2_s", "2_h", "2_d", "2_c", "3_s", "3_h", "3_d", "3_c", "4_s", "4_h", "4_d", "4_c", "5_s", "5_h", "5_d", "5_c", "6_s", "6_h", "6_d", "6_c", "7_s", "7_h", "7_d", "7_c", "8_s", "8_h", "8_d", "8_c", "9_s", "9_h", "9_d", "9_c", "10_s", "10_h", "10_d", "10_c", "J_s", "J_h", "J_d", "J_c", "Q_s", "Q_h", "Q_d", "Q_c", "K_s", "K_h", "K_d", "K_c", "A_s", "A_h", "A_d", "A_c"];
-const sdk = ThirdwebSDK.fromPrivateKey("b468b6263292af56fcb78cfce1fc83ba504422307b4baa6cb99b8f3d01ebd3d0", LightlinkPegasusTestnet, {
-    secretKey: "TbEJa6nQ01Nc7BHZuOG3jAiTOOTPN_AkeEmt8Qnlp7aQmgfzurz0z8_yiGOrVY-4CL5HdxHp4vbSxwkMzNuD8w",
+const sdk = ThirdwebSDK(Mumbai, {
+    secretKey: "B6Y8UAsf7OuEur547HP4d3SpfLG4wL5kggx3eiPsBUvSI8L57QZ3DT8-FEvje9Hkqf6jQQ-XauiJ0X4wMe9LiA",//the secret key for the sdk
   } );
 
 const getARandomDeck = ()=>{
@@ -130,7 +130,7 @@ const _postDeckAndShuffel = async (contractAddress) => {
     //uploding the deck of the game. AFTER: randGenerated.
     const room = await Room.findByAddressValue(contractAddress);    
     try{
-        const TheContract = await sdk.getContract(contractAddress);
+        const TheContract = await sdk.getContract(contractAddress, );
         const _deck = room.encryptedDeck;
         const data0 = await TheContract.call("uploadEncriptedDeck", [_deck])
         console.log("!!Game Important: entered the GameDeckUploded.");

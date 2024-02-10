@@ -6,13 +6,13 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
+import { Mumbai } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { betRaised, UserFoldedWithReason, betCalled, deckPost, pKeyExposed, StateDiscloser, WithdrawalRequested, RandomNumberGenerated }  from "./HandelContractEmits/index.js";
 import Room from "./models/room.js";
 dotenv.config();
 
-const THECONTRACTBABY = "0x719A03ae0122cC82621C9a863bdF49D93d419687";
+const THECONTRACTBABY = "0x08B7A074659DcA4670516Fe988c1251161E7f923";
 
 const app = express();
 
@@ -73,9 +73,8 @@ io.on("connection", (socket) => {
 });
 
 
-const sdk = ThirdwebSDK.fromPrivateKey("b468b6263292af56fcb78cfce1fc83ba504422307b4baa6cb99b8f3d01ebd3d0", LightlinkPegasusTestnet, {
+const sdk = new ThirdwebSDK(Mumbai, {
       secretKey: "TbEJa6nQ01Nc7BHZuOG3jAiTOOTPN_AkeEmt8Qnlp7aQmgfzurz0z8_yiGOrVY-4CL5HdxHp4vbSxwkMzNuD8w",
-                  
     } );
     
 const ABI = await Room.getABIbyAddressValue(THECONTRACTBABY);
@@ -93,8 +92,8 @@ contract.events.addEventListener("RandomNumberGenerated", (event) => RandomNumbe
 contract.events.addEventListener("WithdrawalRequested", (event) => WithdrawalRequested(event,io));
 
 
-const contract2 = await sdk.getContract("0x98a1fc6974Fa4F278B4C9973fE08d9e4eF375DEc");
-contract2.events.addEventListener("eventName",(event)=>testingEvent(event,io));
+// const contract2 = await sdk.getContract("0x98a1fc6974Fa4F278B4C9973fE08d9e4eF375DEc");
+// contract2.events.addEventListener("eventName",(event)=>testingEvent(event,io));
 
 // const testingEvent = (event,io) => {
 //   console.log("this text is important to show up...");

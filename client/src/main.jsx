@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import { ThirdwebProvider } from '@thirdweb-dev/react'
-import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains"
+import { Mumbai } from "@thirdweb-dev/chains"
 import App from './App.jsx'
 import './index.css'
 import ContextProvierAllOver from './context/index.jsx';
@@ -10,7 +10,7 @@ import { RecoilRoot } from 'recoil'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ContextProvierAllOver>
     <ThirdwebProvider
-      activeChain={LightlinkPegasusTestnet}
+      activeChain={Mumbai}
       clientId="5569ec4bd273c9e940fe4ff0cc4dd685"
     >
       {/* <Web3ContextProvider> */}

@@ -17,24 +17,24 @@ import { CONTRACTABI } from "../utils";
 
 //contract read stuff...
 
-import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
+import { Mumbai } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import Loading from "@/utils/Loading";
 
 // If used on the FRONTEND pass your 'clientId'
 const metamaskConfig = metamaskWallet();
-const sdk = new ThirdwebSDK(LightlinkPegasusTestnet, {
-  clientId: "5569ec4bd273c9e940fe4ff0cc4dd685",
+const sdk = new ThirdwebSDK(Mumbai, {
+  clientId: "a1bcea2b06796f4142007e99b311f67b",
 });
 
-const TheContract = await sdk.getContract("0x719A03ae0122cC82621C9a863bdF49D93d419687");
+const TheContract = await sdk.getContract("0x08B7A074659DcA4670516Fe988c1251161E7f923");
 
 //contract read initilisation done....
 
 export default function Room() {
   // const [message, setMessage] = useState("");
   // const { emitMessage } = useSocketContext();
-  const theDefaultContract = useContract("0x719A03ae0122cC82621C9a863bdF49D93d419687",CONTRACTABI);
+  const theDefaultContract = useContract("0x08B7A074659DcA4670516Fe988c1251161E7f923",CONTRACTABI);
   const connect = useConnect();
   const [params] = useSearchParams();
   const roomToken = params.get("roomToken");

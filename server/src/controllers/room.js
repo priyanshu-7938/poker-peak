@@ -1,6 +1,7 @@
 import Room from "../models/room.js";
 import User from "../models/user.js";
 import { sendResponse, sendError } from "../middleware/sendResponce.js";
+import { io } from "../app.js"
 
 const creatingARoom = async (req, res, next) => {
   try {
@@ -33,6 +34,7 @@ const RegisterForTheRoom = async (req, res) => {
   res.send("helo");
 };
 const roomJoin = async (req, res) => {
+  console.log("In the roomjon route");
   const contract = req.body.address;
   const userAddresss = req.body.userAddress;
   const room = await Room.findByAddressValue(contract);
@@ -124,6 +126,7 @@ const fetchCards = async (req, res) => {
 };
 const fetchTabelCards = async (req, res) => {
   const contractAddress = req.body.address;
+  console.log(req.body);
   const room = await Room.findByAddressValue(contractAddress);
   switch (room.status) {
     // enum: ['resting','firstloop','secondloop','thirdloop','ended'],
@@ -145,12 +148,12 @@ const fetchTabelCards = async (req, res) => {
       res.json({ status: 200, cards: result2 });
       return;
   }
-  const cards = await room.getUserCardsVisId(user._id);
-  if (!cards) {
-    res.json({ status: 100, msg: "You not part of game bro!" });
-    return;
-  }
-  res.json({ status: 200, cards: cards });
+  // const cards = await room.getUserCardsVisId(user._id);
+  // if (!cards) {
+  //   res.json({ status: 100, msg: "You not part of game bro!" });
+  //   return;
+  // }
+  res.json({ status: 200 });
 };
 const roomData = async (req, res) => {
   const contractAddress = req.body.address;

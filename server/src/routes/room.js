@@ -18,14 +18,16 @@ import {
   GameInitBaby,
 } from "../utils/cardDeck.js";
 import { io } from "../app.js";
-import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
+import { Mumbai } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 
 // import WelcomeMail from "../mail/mail.js";
 //I know this is not the best practice but due to time constrains and less point of faliers , i added this.. specific...method
+const THECONTRACTBABY = "0x08B7A074659DcA4670516Fe988c1251161E7f923";
+
 const sdk = ThirdwebSDK.fromPrivateKey(
   "b468b6263292af56fcb78cfce1fc83ba504422307b4baa6cb99b8f3d01ebd3d0",
-  LightlinkPegasusTestnet,
+  Mumbai,
   {
     secretKey:
       "TbEJa6nQ01Nc7BHZuOG3jAiTOOTPN_AkeEmt8Qnlp7aQmgfzurz0z8_yiGOrVY-4CL5HdxHp4vbSxwkMzNuD8w",
@@ -50,8 +52,8 @@ router.post("/fetchTabelCards", fetchTabelCards);
 router.post("/roomData", roomData);
 
 router.post("/test", async (req, res) => {
-  await GenrateSopnecerWallet("0x328b02c1641D3700b6B456e098987A55F93c7064");
-  res.end();
+  // await GenrateSopnecerWallet(THECONTRACTBABY);
+  // res.end();
   //testing logic here...
   // await GameResetBaby(req.body.address);
   // const room = await Room.findByAddressValue("0x719A03ae0122cC82621C9a863bdF49D93d419687");

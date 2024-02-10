@@ -9,13 +9,11 @@ const handelSignupForUser = async (req, res) => {
     // await sendSignUpOtp(user);
     const token = await user.generateAuthToken();
 
-    // console.log(user.toJSON());
+    // console.log(user.toJSON());w
     sendResponse(res, 201, "signup successful", {
       user,
       token,
     });
-    // await WelcomeMail();
-    // console.log("mailsent...");
   } catch (e) {
     // logger.info(`${e}`);
     console.log(e);

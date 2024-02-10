@@ -3,6 +3,10 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+dotenv.config({
+  path:"../.env"
+});
+console.log(process.env);
 
 const userSchema = new mongoose.Schema(
   {
@@ -80,6 +84,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
+  console.log("in the genauth:",process.env.JWT_SECRET);
   const tok = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET);
   user.token = tok;
   await user.save({ validataBeforeSave: false });
