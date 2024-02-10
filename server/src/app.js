@@ -6,13 +6,13 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import { Mumbai } from "@thirdweb-dev/chains";
+import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { betRaised, UserFoldedWithReason, betCalled, deckPost, pKeyExposed, StateDiscloser, WithdrawalRequested, RandomNumberGenerated }  from "./HandelContractEmits/index.js";
 import Room from "./models/room.js";
 dotenv.config();
 
-const THECONTRACTBABY = "0x08B7A074659DcA4670516Fe988c1251161E7f923";
+const THECONTRACTBABY = "0xFaBF45b94110514798bC5a803CA28b2042598C2e";
 
 const app = express();
 
@@ -73,8 +73,8 @@ io.on("connection", (socket) => {
 });
 
 
-const sdk = new ThirdwebSDK(Mumbai, {
-      secretKey: "TbEJa6nQ01Nc7BHZuOG3jAiTOOTPN_AkeEmt8Qnlp7aQmgfzurz0z8_yiGOrVY-4CL5HdxHp4vbSxwkMzNuD8w",
+const sdk = new ThirdwebSDK(LightlinkPegasusTestnet, {
+      secretKey: "6stWsoOg6ve-2lHtDD4C2tV0N2XD96R-YnKKaGePgMRo-lWH6aKMJc2HUHSGSskRLEJDGsKFM5MH0EkerG359g",
     } );
     
 const ABI = await Room.getABIbyAddressValue(THECONTRACTBABY);

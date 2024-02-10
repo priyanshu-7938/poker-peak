@@ -17,24 +17,24 @@ import { CONTRACTABI } from "../utils";
 
 //contract read stuff...
 
-import { Mumbai } from "@thirdweb-dev/chains";
+import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import Loading from "@/utils/Loading";
 
 // If used on the FRONTEND pass your 'clientId'
 const metamaskConfig = metamaskWallet();
-const sdk = new ThirdwebSDK(Mumbai, {
-  clientId: "a1bcea2b06796f4142007e99b311f67b",
+const sdk = new ThirdwebSDK(LightlinkPegasusTestnet, {
+  clientId: "e05dd9d3c5ecd6d1ce042d4b6bfc53ff",
 });
 
-const TheContract = await sdk.getContract("0x08B7A074659DcA4670516Fe988c1251161E7f923");
+const TheContract = await sdk.getContract("0xFaBF45b94110514798bC5a803CA28b2042598C2e",CONTRACTABI);
 
 //contract read initilisation done....
 
 export default function Room() {
   // const [message, setMessage] = useState("");
   // const { emitMessage } = useSocketContext();
-  const theDefaultContract = useContract("0x08B7A074659DcA4670516Fe988c1251161E7f923",CONTRACTABI);
+  const theDefaultContract = useContract("0xFaBF45b94110514798bC5a803CA28b2042598C2e");
   const connect = useConnect();
   const [params] = useSearchParams();
   const roomToken = params.get("roomToken");
@@ -178,12 +178,11 @@ export default function Room() {
   }, []);
 
   useEffect(() => {
-    //TODO: add fetchRoomState....
-
     fetchTHeUsers();
     fetchTheUserCards();
     fetchTheTabelCards();
   }, []);
+
   useEffect(() => {
     // ['resting','firstloop','secondloop','thirdloop','ended'],
     if (stateOfGame !== "resting"){
@@ -200,16 +199,15 @@ export default function Room() {
     console.log(data);
     message.info("You folded!!", 2000);
   }
+
   const callCommand = async () => {
     const data = await theDefaultContract.contract.call("callBet", [],{
       value: theCurrentBet * 1000000000000000000,
     });
     console.log(data);
     message.info("You Called!!", 2000);
-    // const data = await TheContract.call("fold", []);
-    // console.log(data);
-    // alert("call");
   }
+
   const raiseCommand = async () => {
     const val = parseFloat(prompt("Enter raised Amount! (in ethers)"));
     console.log(val*1000000000000000000);
@@ -223,12 +221,13 @@ export default function Room() {
     console.log(data);
     message.info("You raised the bet to:"+val,2000);
   }
-
+  
   const fetchExpectedUser = async () => {
     const data = await TheContract.call("expectedUserAddress", [])
     setExpectedPlayer(data);
   }
   const fetchTheUserCards = () => {
+    
     if (!userAddress) {
       return;
     }
@@ -238,23 +237,24 @@ export default function Room() {
     }
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-
     var urlencoded = new URLSearchParams();
     urlencoded.append("address", roomToken);
     urlencoded.append("userAddress", userAddress);
 
     var requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: myHeaders,
       body: urlencoded,
-      redirect: "follow"
+      redirect: 'follow'
     };
-
     fetch("http://localhost:2024/fetchCards", requestOptions)
       .then((response) => response.text())
-      .then((result) => setTheUserCards(JSON.parse(result).cards))
+      .then((result) => {setTheUserCards(JSON.parse(result).cards);console.log("Well.it was good");})
       .catch((error) => console.log("error", error));
   };
+
+  console.log("The cards:",theUserCards);
+
   const fetchTheGameState = async () => {
     //fetching from the blockchain
     const data = await TheContract.call("stateDefiner", []);
@@ -277,12 +277,14 @@ export default function Room() {
         break;
     }
   }
+
   const fetchThePotValue = async () => {
     const data = await TheContract.call("currentBet", []);
     setTheCurrentBet(parseInt(data._hex.toString(),16)/1000000000000000000);
     const data1 = await TheContract.call("pooledAmount", []);
     setThePoolAmount(parseInt(data1._hex.toString(),16)/10000000000000000000);
   }
+
   const fetchTheTabelCards = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -306,6 +308,7 @@ export default function Room() {
       })
       .catch((error) => console.log("error", error));
   };
+
   const fetchTHeUsers = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -327,6 +330,7 @@ export default function Room() {
       })
       .catch((error) => console.log("error", error));
   };
+
   const leaveRoom = () => {
     if (!userAddress || !roomToken) {
       alert("Try again later...");
@@ -353,19 +357,9 @@ export default function Room() {
       .then((result) => navigate("/home/rooms"))
       .catch((error) => console.log("error", error));
   };
-  // const sendMessage = () => {
-  //   emitMessage("helo");
-  //   console.log("emmited");
-  // };
-  // useSocketSetupForRoom();
 
   if (loading) {
     return (
-      // <img
-      //   src="/assets/spinner.svg"
-      //   className="m-auto bg-black"
-      //   alt="loading...."
-      // />
       <Loading />
     );
   }

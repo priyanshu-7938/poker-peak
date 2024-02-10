@@ -2,17 +2,14 @@ import { spawn } from 'child_process';
 import dotenv from "dotenv";
 import Room from "../models/room.js";
 import User from '../models/user.js';
-import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
+import { LightlinkPegasusTestnet,  } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-
-
 dotenv.config();
-
 
 import crypto from "crypto";
 const CARDDECK =  ["2_s", "2_h", "2_d", "2_c", "3_s", "3_h", "3_d", "3_c", "4_s", "4_h", "4_d", "4_c", "5_s", "5_h", "5_d", "5_c", "6_s", "6_h", "6_d", "6_c", "7_s", "7_h", "7_d", "7_c", "8_s", "8_h", "8_d", "8_c", "9_s", "9_h", "9_d", "9_c", "10_s", "10_h", "10_d", "10_c", "J_s", "J_h", "J_d", "J_c", "Q_s", "Q_h", "Q_d", "Q_c", "K_s", "K_h", "K_d", "K_c", "A_s", "A_h", "A_d", "A_c"];
-const sdk = ThirdwebSDK(Mumbai, {
-    secretKey: "B6Y8UAsf7OuEur547HP4d3SpfLG4wL5kggx3eiPsBUvSI8L57QZ3DT8-FEvje9Hkqf6jQQ-XauiJ0X4wMe9LiA",//the secret key for the sdk
+const sdk = ThirdwebSDK.fromPrivateKey(process.env.PRIVATE_SERVER_KEY , LightlinkPegasusTestnet, {
+    secretKey: "6stWsoOg6ve-2lHtDD4C2tV0N2XD96R-YnKKaGePgMRo-lWH6aKMJc2HUHSGSskRLEJDGsKFM5MH0EkerG359g",//the secret key for the sdk
   } );
 
 const getARandomDeck = ()=>{
@@ -77,7 +74,10 @@ const GameInitBaby = async (contractAddress) => {
     //game init baby...
     //TODO: remove the below comment it is there because it should nt be run this time cause it does not need to be for the first loop.
 
-    _postDeckAndShuffel(contractAddress);
+    await _postDeckAndShuffel(contractAddress);
+
+    console.log("GameInint calling the posting of the users...");
+
     
     const room = await Room.findByAddressValue(contractAddress);
     const users = room.users;
@@ -115,12 +115,13 @@ const GameResetBaby = async (contractAddress) => {
         console.log("!!Game Important: Reset The Game With CleanUp & Winner Funded");
         
         //now dbms cleanup... bebo and new initiation...
-        room.flushData();
-        
+        await room.flushData();
+
         // generate the random number...
         const _sponsorWallet = room.sponcerAddress;
         await contract.call("GenerateRandomNumber", [_sponsorWallet]);
         console.log("!!Game Important: The request for new random number if initiated.!");
+
     }catch(error){
         console.log("!!ERROR: at the resetting of the system...",error);
     }
@@ -128,6 +129,7 @@ const GameResetBaby = async (contractAddress) => {
 }
 const _postDeckAndShuffel = async (contractAddress) => {
     //uploding the deck of the game. AFTER: randGenerated.
+    console.log("In the _postShuffel....");
     const room = await Room.findByAddressValue(contractAddress);    
     try{
         const TheContract = await sdk.getContract(contractAddress, );
@@ -152,3 +154,12 @@ export {
     GenrateSopnecerWallet,
     
 }
+
+
+/*
+xpub6CuDdF9zdWTRuGybJPuZUGnU4suZowMmgu15bjFZT2o6PUtk4Lo78KGJUGBobz3pPKRaN9sLxzj21CMe6StP3zUsd8tWEJPgZBesYBMY7Wo 
+0x6238772544f029ecaBfDED4300f13A3c4FE84E1D
+    const sponsorAddress = address;
+
+    const command = 'npx @api3/airnode-admin derive-sponsor-wallet-address --airnode-xpub xpub6CuDdF9zdWTRuGybJPuZUGnU4suZowMmgu15bjFZT2o6PUtk4Lo78KGJUGBobz3pPKRaN9sLxzj21CMe6StP3zUsd8tWEJPgZBesYBMY7Wo --airnode-address 0x6238772544f029ecaBfDED4300f13A3c4FE84E1D --sponsor-address
+*/

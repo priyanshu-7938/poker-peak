@@ -104,7 +104,7 @@ contract PokerRoom is RrpRequesterV0{
     }
 
     //functions
- ction GenerateRandomNumber(
+    function GenerateRandomNumber(
         address _sponsorWallet
     ) external onlyServer returns(bool){
         require( !APPLIEDFORRANDOMNUMBERGENERATION,'{"statusCode": 402, "message": "The request is allready made."');

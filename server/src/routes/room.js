@@ -18,19 +18,21 @@ import {
   GameInitBaby,
 } from "../utils/cardDeck.js";
 import { io } from "../app.js";
-import { Mumbai } from "@thirdweb-dev/chains";
+import { LightlinkPegasusTestnet } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
+import dotenv from "dotenv";
+dotenv.config();
 
 // import WelcomeMail from "../mail/mail.js";
 //I know this is not the best practice but due to time constrains and less point of faliers , i added this.. specific...method
-const THECONTRACTBABY = "0x08B7A074659DcA4670516Fe988c1251161E7f923";
+const THECONTRACTBABY = "0xFaBF45b94110514798bC5a803CA28b2042598C2e";
 
 const sdk = ThirdwebSDK.fromPrivateKey(
-  "b468b6263292af56fcb78cfce1fc83ba504422307b4baa6cb99b8f3d01ebd3d0",
-  Mumbai,
+  process.env.PRIVATE_SERVER_KEY,
+  LightlinkPegasusTestnet,
   {
     secretKey:
-      "TbEJa6nQ01Nc7BHZuOG3jAiTOOTPN_AkeEmt8Qnlp7aQmgfzurz0z8_yiGOrVY-4CL5HdxHp4vbSxwkMzNuD8w",
+      "6stWsoOg6ve-2lHtDD4C2tV0N2XD96R-YnKKaGePgMRo-lWH6aKMJc2HUHSGSskRLEJDGsKFM5MH0EkerG359g",
   }
 );
 
@@ -52,6 +54,21 @@ router.post("/fetchTabelCards", fetchTabelCards);
 router.post("/roomData", roomData);
 
 router.post("/test", async (req, res) => {
+
+  const contractAddress = req.body.address;
+
+  const TheRoom = await Room.findByAddressValue(contractAddress);
+  TheRoom.flushData();
+  
+  
+  
+  const room = await Room.findByAddressValue(contractAddress);
+  const contract = await sdk.getContract(contractAddress);
+  const _sponsorWallet = room.sponcerAddress;
+  await contract.call("GenerateRandomNumber", [_sponsorWallet]);
+  console.log("!!Game Important: The request for new random number if initiated.!");
+  res.send("wallaha");
+
   // await GenrateSopnecerWallet(THECONTRACTBABY);
   // res.end();
   //testing logic here...

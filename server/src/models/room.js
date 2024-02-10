@@ -213,9 +213,6 @@ roomSchema.methods.getUserCardsVisId = async function (_id) {
   return cards;
 };
 
-roomSchema.methods.decodeCards = function () {
-  // your decoding logic here
-};
 
 roomSchema.methods.updatePooledAmounnt = async function (pooledAmount) {
   const room = this;
@@ -310,6 +307,7 @@ roomSchema.methods.flushData = async function() {
     await this.save({ validateBeforeSave: false });
     this.initGame();
 }
+
 roomSchema.pre("validate", function (next) {
   if (!this.isNew) {
     return next();

@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 dotenv.config({
   path:"../.env"
 });
-console.log(process.env);
 
 const userSchema = new mongoose.Schema(
   {

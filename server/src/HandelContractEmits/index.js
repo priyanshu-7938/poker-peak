@@ -69,6 +69,7 @@ const StateDiscloser = async (data, io) => {
         "msg":"Status was updated",
     });
     if(data.data.stateTransitationTo === "ended" ){
+
         GameResetBaby(room.contrctAddress);
     }
     console.log("!!Game Important: The game state changed.");
@@ -88,7 +89,7 @@ const RandomNumberGenerated = async (data, io) => {
     io.emit("RandomNumberGenerated",{
         "status":200,
         "msg":"Deck was poseted.",
-    });
+    }); 
 }
 const WithdrawalRequested = async (data, io) => {
     //widrawal.. request was emited...
