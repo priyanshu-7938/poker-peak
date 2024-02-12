@@ -89,7 +89,8 @@ const RandomNumberGenerated = async (data, io) => {
     io.emit("RandomNumberGenerated",{
         "status":200,
         "msg":"Deck was poseted.",
-    }); 
+    });
+    console.log("!!Game Important: Random number was generated.");
 }
 const WithdrawalRequested = async (data, io) => {
     //widrawal.. request was emited...

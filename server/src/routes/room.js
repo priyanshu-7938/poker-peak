@@ -57,18 +57,24 @@ router.post("/test", async (req, res) => {
 
   const contractAddress = req.body.address;
 
-  const TheRoom = await Room.findByAddressValue(contractAddress);
-  TheRoom.flushData();
+  // const TheRoom = await Room.findByAddressValue(contractAddress);
+  // TheRoom.flushData();
   
   
-  
-  const room = await Room.findByAddressValue(contractAddress);
-  const contract = await sdk.getContract(contractAddress);
-  const _sponsorWallet = room.sponcerAddress;
-  await contract.call("GenerateRandomNumber", [_sponsorWallet]);
-  console.log("!!Game Important: The request for new random number if initiated.!");
-  res.send("wallaha");
+  //dont know what happened here...
 
+  // const room = await Room.findByAddressValue(contractAddress);
+  // const contract = await sdk.getContract(contractAddress);
+  // const _sponsorWallet = room.sponcerAddress;
+  // await contract.call("GenerateRandomNumber", [_sponsorWallet]);
+  // console.log("!!Game Important: The request for new random number if initiated.!");
+  // res.send("wallaha");
+
+  await GameResetBaby(contractAddress);
+  res.send("Helo:");
+
+
+  
   // await GenrateSopnecerWallet(THECONTRACTBABY);
   // res.end();
   //testing logic here...
