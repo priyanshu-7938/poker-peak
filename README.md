@@ -1,4 +1,4 @@
-# Poker Peak  
+i# Poker Peak  
 
 Poker Peak is a decentralized poker platform leveraging smart contracts and a responsive server to deliver a seamless gaming experience. The project combines blockchain technology with real-time state management to ensure fair play and transparent state updates.  
 
@@ -28,6 +28,7 @@ Poker Peak is a decentralized poker platform leveraging smart contracts and a re
 3. **Client**:  
    Displays the game state received from the server, allowing users to view and interact with the game seamlessly.  
 
+![artitucture](desktop.jpg)
 ## Getting Started  
 
 ### Prerequisites  
